@@ -5,7 +5,7 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.enums import ChatMemberStatus
 from aiogram.filters import IS_MEMBER, IS_NOT_MEMBER, ChatMemberUpdatedFilter
 from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.types import MessageReactionUpdated, ChatMemberUpdated
+from aiogram.types import MessageReactionUpdated, ChatMemberUpdated, Message
 
 from classifier.main import is_nsfw
 from config import TELEGRAM_BOT_TOKEN
@@ -91,6 +91,26 @@ async def handle_user_joined(event: ChatMemberUpdated) -> None:
         chat_id=event.chat.id,
         user_id=event.new_chat_member.user.id,
     )
+
+
+
+@dp.message(F.chat.type == "private", F.photo)
+async def handle_test_photo(message: Message) -> None:
+    logger.info("Test photo received: user_id=%s", message.from_user.id)
+    photo_size = message.photo[-1]
+    file = await bot.get_file(photo_size.file_id)
+
+    logger.info("Downloading test photo: user_id=%s, file_id=%s", message.from_user.id, photo_size.file_id)
+    buffer = await bot.download_file(file.file_path)
+    if isinstance(buffer, BytesIO): file_bytes = buffer.getvalue()
+    else: file_bytes = buffer.read()
+
+    logger.info("Test photo downloaded: user_id=%s, bytes=%s", message.from_user.id, len(file_bytes))
+    result = is_nsfw(file_bytes)
+    logger.info("Test NSFW result: user_id=%s, nsfw=%s, score=%.2f%%", message.from_user.id, result.nsfw, result.max_score * 100)
+
+    if result.nsfw: await message.answer(f"NSFW detected. Score: {result.max_score:.2%}")
+    else: await message.answer(f"Passed. Score: {result.max_score:.2%}")
 
 async def run_bot():
     logging.basicConfig(level=logging.INFO)
