@@ -1,6 +1,6 @@
 import asyncio
 
-from bot import run_bot
+from src.bot import run_bot
 
 async def main():
     await run_bot()
