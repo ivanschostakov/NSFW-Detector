@@ -7,7 +7,7 @@ from aiogram.filters import IS_MEMBER, IS_NOT_MEMBER, ChatMemberUpdatedFilter
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import MessageReactionUpdated, ChatMemberUpdated, Message
 
-from classifier.main import is_nsfw
+from src.classifier.main import is_nsfw
 from config import TELEGRAM_BOT_TOKEN
 
 
