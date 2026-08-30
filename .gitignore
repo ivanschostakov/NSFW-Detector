@@ -1,4 +1,27 @@
-*.env
+# Environment and credentials
+.env
+.env.*
+!.env.example
+
+# Python
 .venv/
+venv/
 __pycache__/
-*.pyc
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Model caches and runtime output
+.cache/
+logs/
+*.log
+*.sqlite*
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
